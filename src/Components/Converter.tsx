@@ -15,11 +15,11 @@ export const FileConverter = ({
   fileName: string;
   // sett: (final: string) => void;
 }) => {
-  console.log(fileName);
   // const myRef = React.createRef();
   const [value, setValue] = useState(1);
   const [loading, setLoading] = useState(false);
   const [imageUrls, setImageUrls] = useState<string[]>([]);
+  console.log({ imageUrls });
 
   const [text, setText] = useState('');
   useEffect(() => {
