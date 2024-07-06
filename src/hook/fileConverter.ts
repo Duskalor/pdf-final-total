@@ -2,12 +2,10 @@ import { GlobalWorkerOptions, getDocument } from 'pdfjs-dist/build/pdf';
 GlobalWorkerOptions.workerSrc = '/pdf.worker.js';
 import Tesseract from 'tesseract.js';
 
-// let textFinal: string[] = [];
-
 const renderPage = async (data: string) => {
   // const imagesList: string[] = [];
   const canvas = document.createElement('canvas');
-  canvas.setAttribute('className', 'canv');
+  // canvas.setAttribute('className', 'canv');
   const pdf = await getDocument({ data }).promise;
   const page = await pdf.getPage(1);
   const viewport = page.getViewport({ scale: 4 });
@@ -57,6 +55,5 @@ export const FileConverter = async (pdfs: File[]) => {
     return UrlUploader(pdfUrl);
   });
   const result = await Promise.all(AllFile);
-  // console.log(result);
   return result;
 };

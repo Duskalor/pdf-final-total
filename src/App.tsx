@@ -2,13 +2,20 @@ import { useEffect, useState } from 'react';
 import './App.css';
 import { InputPdf } from './Components/ImputPdf';
 import { FileConverter } from './hook/fileConverter';
+import { extract } from './utils/extract';
+import { toXlsx } from './utils/toxlsx';
+// import { FinalJson } from './types/final';
 function App() {
   const [pdfFile, setPdfFile] = useState<File[]>([]);
   const [text, setText] = useState<string[]>([]);
-  console.log({ text });
 
   useEffect(() => {
     if (text.length === 0) return;
+
+    const Json = text.map((tx) => extract(tx));
+    console.log(Json);
+    if (!Json) return;
+    toXlsx(Json);
   }, [text]);
 
   useEffect(() => {

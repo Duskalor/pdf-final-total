@@ -1,7 +1,7 @@
-import { toXlsx } from './toxlsx.js';
+import { FinalJson } from '../types/final';
 
-const buscarTexto = (texto, valores) => {
-  for (var i = 0; i < valores.length; i++) {
+const buscarTexto = (texto: string, valores: string[]) => {
+  for (let i = 0; i < valores.length; i++) {
     if (texto.includes(valores[i])) {
       return valores[i];
     }
@@ -9,39 +9,49 @@ const buscarTexto = (texto, valores) => {
   return 'Ninguno de los valores está presente en el texto.';
 };
 
-const titles = {
+const titles: Record<string, string> = {
   FUNDACION: 'PROTOCOLO DE FUNDACIÓN',
   VACIADO: 'PROTOCOLO DE PRE VACIADO',
 };
 
-async function main(text) {
-  console.time('PDF Processing'); // Inicia el temporizador
-
+export const extract = (text: string): FinalJson => {
+  console.log(text);
   const textNomalize = text.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
   const valueee = buscarTexto(textNomalize, Object.keys(titles));
   const firstTitle = titles[valueee];
 
   const regexArea = /AREA DE TRABAJO:\s*([^\n]+)/;
   const matchArea = regexArea.exec(text);
-  const value = matchArea.toString().split(' FECHA: ');
+  const value = matchArea!.toString().split(' FECHA: ');
   const areaTrabajo = value[0];
-  const fecha = value.pop();
-  //  continuar
-  const regexDesc = /DESCRIPCIÓN:\s*([^\n]+)/;
-  const matchDes = regexDesc.exec(text)[0];
-  const descripcion = matchDes.split(' ELABORADO POR:').shift();
+  const fecha = value.pop()!;
+
+  const regexDesc = /DESCRIPCION:\s*([^\n]+)/;
+  const matchDes = regexDesc.exec(text)!;
+  // if (!matchDes) return;
+  const matchDes1 = matchDes[0];
+  const descripcion = matchDes1.split(' ELABORADO POR:').shift();
 
   const regexActiv = /ACTIVIDAD:\s*([^\n]+)/;
-  const actividad = regexActiv.exec(text)[0];
+  const matchActv = regexActiv.exec(text)!;
+  // if (!matchActv) return;
+  const matchActv1 = matchActv[0];
+  const actividad = matchActv1.split(' ELABORADO POR:').shift();
 
-  let title = `${firstTitle} - ${areaTrabajo} - ${descripcion} - ${actividad}`;
-  let commen;
+  const regexProtocol = /PROTOCOLO:\s*([^\n]+)/;
+  const matchProto = regexProtocol.exec(text)!;
+  // if (!matchActv) return;
+  const matchProto1 = matchProto[0];
+  const protocolo = matchProto1.split('PROTOCOLO: ').pop()!;
+  console.log(protocolo);
+  const title = `${firstTitle} - ${areaTrabajo} - ${descripcion} - ${actividad}`;
+  let commen = '';
   if (title.length > 255) {
     title.slice(0, 255);
-    commen = title.split('-').pop();
+    commen += title.split('-').pop();
   }
   const finalJson = {
-    'Nro de Documento': '',
+    'Nro de Documento': protocolo,
     Revisión: 0,
     Título: `${title} - ${areaTrabajo} - ${descripcion} - ${actividad}`,
     tipo: 'PROTOCOLO',
@@ -57,7 +67,7 @@ async function main(text) {
     Atributo1: '',
     Archivo: '',
     'Tamaño de impresión': '',
-    'Fecha de emisión': fecha.split(': ').pop(),
+    'Fecha de emisión': fecha,
     'Fecha del hito': '',
     'Fecha prevista de envio': '',
     'Fecha de reporte Diario': '',
@@ -66,8 +76,7 @@ async function main(text) {
     'N° Tag/Equipo': '',
     Sustituir: '',
   };
-  console.log(finalJson);
-  toXlsx([finalJson]);
-  console.timeEnd('PDF Processing');
-}
-// main();
+  // console.log(finalJson);
+  return finalJson;
+  // toXlsx([finalJson]);
+};
