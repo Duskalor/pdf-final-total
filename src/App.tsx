@@ -8,14 +8,14 @@ import { toXlsx } from './utils/toxlsx';
 function App() {
   const [pdfFile, setPdfFile] = useState<File[]>([]);
   const [text, setText] = useState<string[]>([]);
-
+  console.log(text);
   useEffect(() => {
     if (text.length === 0) return;
 
     const Json = text.map((tx) => extract(tx));
     console.log(Json);
     if (!Json) return;
-    toXlsx(Json);
+    // toXlsx(Json);
   }, [text]);
 
   useEffect(() => {

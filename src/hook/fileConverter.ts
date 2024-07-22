@@ -48,12 +48,24 @@ const extractText = async (base64Image: string) => {
   return text;
 };
 
+const processPdfsInBatches = async (urls: File[], batchSize: number) => {
+  const results = [];
+
+  for (let i = 0; i < urls.length; i += batchSize) {
+    const batch = urls.slice(i, i + batchSize);
+
+    const AllFile = batch.map((pdf) => {
+      const pdfUrl = URL.createObjectURL(pdf);
+      return UrlUploader(pdfUrl);
+    });
+    const batchResults = await Promise.all(AllFile);
+    results.push(...batchResults);
+  }
+  return results;
+};
+
 export const FileConverter = async (pdfs: File[]) => {
   if (pdfs.length === 0) return;
-  const AllFile = pdfs.map((pdf) => {
-    const pdfUrl = URL.createObjectURL(pdf);
-    return UrlUploader(pdfUrl);
-  });
-  const result = await Promise.all(AllFile);
+  const result = await processPdfsInBatches(pdfs, 5);
   return result;
 };

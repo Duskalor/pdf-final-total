@@ -41,6 +41,7 @@ export const extract = (text: string): FinalJson => {
   const regexProtocol = /PROTOCOLO:\s*([^\n]+)/;
   const matchProto = regexProtocol.exec(text)!;
   // if (!matchActv) return;
+  console.log(matchProto);
   const matchProto1 = matchProto[0];
   const protocolo = matchProto1.split('PROTOCOLO: ').pop()!;
   console.log(protocolo);
