@@ -1,6 +1,8 @@
 import { GlobalWorkerOptions, getDocument } from 'pdfjs-dist/build/pdf';
 GlobalWorkerOptions.workerSrc = '/pdf.worker.js';
-import Tesseract from 'tesseract.js';
+// import { getDocument } from 'pdfjs-dist';
+import tesseract from 'tesseract.js';
+// const worker = await createWorker('spa');
 
 const renderPage = async (data: string) => {
   // const imagesList: string[] = [];
@@ -44,7 +46,8 @@ const UrlUploader = async (url: string) => {
 const extractText = async (base64Image: string) => {
   const {
     data: { text },
-  } = await Tesseract.recognize(base64Image, 'eng');
+  } = await tesseract.recognize(base64Image, 'spa');
+  // await worker.terminate();
   return text;
 };
 
@@ -52,20 +55,25 @@ const processPdfsInBatches = async (urls: File[], batchSize: number) => {
   const results = [];
 
   for (let i = 0; i < urls.length; i += batchSize) {
+    console.log({ i });
     const batch = urls.slice(i, i + batchSize);
-
+    // const names = urls.map((n) => n.name);
+    // console.log(names);
     const AllFile = batch.map((pdf) => {
       const pdfUrl = URL.createObjectURL(pdf);
       return UrlUploader(pdfUrl);
     });
     const batchResults = await Promise.all(AllFile);
+    // console.log(batchResults.join('/n'));
     results.push(...batchResults);
   }
   return results;
 };
 
 export const FileConverter = async (pdfs: File[]) => {
+  console.time('timer');
   if (pdfs.length === 0) return;
-  const result = await processPdfsInBatches(pdfs, 5);
+  const result = await processPdfsInBatches(pdfs, 10);
+  console.timeEnd('timer');
   return result;
 };

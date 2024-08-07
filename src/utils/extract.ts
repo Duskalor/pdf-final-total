@@ -15,7 +15,7 @@ const titles: Record<string, string> = {
 };
 
 export const extract = (text: string): FinalJson => {
-  console.log(text);
+  // console.log(text);
   const textNomalize = text.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
   const valueee = buscarTexto(textNomalize, Object.keys(titles));
   const firstTitle = titles[valueee];
@@ -27,24 +27,24 @@ export const extract = (text: string): FinalJson => {
   const fecha = value.pop()!;
 
   const regexDesc = /DESCRIPCION:\s*([^\n]+)/;
-  const matchDes = regexDesc.exec(text)!;
+  const matchDes = regexDesc.exec(textNomalize)!;
   // if (!matchDes) return;
   const matchDes1 = matchDes[0];
   const descripcion = matchDes1.split(' ELABORADO POR:').shift();
 
   const regexActiv = /ACTIVIDAD:\s*([^\n]+)/;
-  const matchActv = regexActiv.exec(text)!;
+  const matchActv = regexActiv.exec(textNomalize)!;
   // if (!matchActv) return;
   const matchActv1 = matchActv[0];
   const actividad = matchActv1.split(' ELABORADO POR:').shift();
 
   const regexProtocol = /PROTOCOLO:\s*([^\n]+)/;
-  const matchProto = regexProtocol.exec(text)!;
+  const matchProto = regexProtocol.exec(textNomalize)!;
   // if (!matchActv) return;
-  console.log(matchProto);
+  // console.log(matchProto);
   const matchProto1 = matchProto[0];
   const protocolo = matchProto1.split('PROTOCOLO: ').pop()!;
-  console.log(protocolo);
+  // console.log(protocolo);
   const title = `${firstTitle} - ${areaTrabajo} - ${descripcion} - ${actividad}`;
   let commen = '';
   if (title.length > 255) {

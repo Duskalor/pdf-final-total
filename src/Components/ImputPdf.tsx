@@ -4,8 +4,10 @@ import filePdf from '../assets/file-pdf-solid-240.png';
 
 export const InputPdf = ({
   onFileChange,
+  setExcel,
 }: {
   onFileChange: (file: File[]) => void;
+  setExcel: () => void;
 }) => {
   const wrapperRef = useRef(null);
   const [file, setFile] = useState<null | File[]>(null);
@@ -33,8 +35,7 @@ export const InputPdf = ({
   return (
     <>
       <section className='flex justify-center items-center flex-row mb-3'>
-        <h1>PDF </h1>
-        <h1>to Excel</h1>
+        <h1>PDF to Excel </h1>
       </section>
       {!file && (
         <button
@@ -44,8 +45,8 @@ export const InputPdf = ({
           onDragLeave={onDragLeave}
           onDrop={onDrop}
         >
-          <div className='text-center font-semibold p-10 '>
-            <img src={uploadImg} alt='' className='w-full' />
+          <div className=' text-center font-semibold p-10  '>
+            <img src={uploadImg} alt='' className='w-full ' />
             <p>Drag & Drop your files here</p>
           </div>
           <input
@@ -61,13 +62,20 @@ export const InputPdf = ({
       {file ? (
         <div className='drop-file-preview'>
           <p className='drop-file-preview__title'>Uploaded file</p>
-          <div className='drop-file-preview__item'>
+          <div className='flex justify-center flex-col drop-file-preview__item'>
             <img src={filePdf} alt='PDF Icon' />
             <div className='drop-file-preview__item__info'>
-              <p>{file.map((file) => file.name)}</p>
-              {/* <p>{returnSize(file)}</p> */}
+              {/* <p>{file.map((file) => file.name)}</p> */}
+              <p>Cantidad de Archivos cargados : {file.length}</p>
             </div>
-            <button onClick={() => setFile(null)}>CERRAR</button>
+            <button
+              onClick={() => {
+                setFile(null);
+                setExcel();
+              }}
+            >
+              CERRAR
+            </button>
           </div>
         </div>
       ) : null}
